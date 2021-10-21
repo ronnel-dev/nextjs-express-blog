@@ -1,27 +1,51 @@
-import Head from "next/head";
-import Layout from "../components/common/layout";
+import React from "react";
 import {
-  Flex,
+  Text,
+  Heading,
+  Link,
+  Container,
   Box,
+  Image,
+  useColorModeValue,
+  HStack,
+  SpaceProps,
+  Tag,
+  Wrap,
+  WrapItem,
+  Divider,
+  VStack,
+  useBreakpointValue,
+  Flex,
+  Stack,
+  Button,
+  Input,
+  Textarea,
   FormControl,
   FormLabel,
-  Input,
-  Stack,
-  Link,
-  Button,
-  Heading,
-  Text,
-  useColorModeValue,
-  Textarea,
-  Container,
-  Image,
 } from "@chakra-ui/react";
-import React from "react";
-import BloggerProfile from "../components/common/BloggerProfile";
+import { GetStaticProps, GetStaticPaths, NextPage } from "next";
+import Layout from "../../components/common/layout";
+import BloggerProfile from "../../components/common/BloggerProfile";
+import Head from "next/head";
 
-export default function CreatePost() {
-  const siteTitle = "Create a Post";
+interface BlogAuthorProps {
+  date: Date;
+  name: string;
+}
 
+export const BlogAuthor: React.FC<BlogAuthorProps> = (props) => {
+  return (
+    <HStack marginTop="2" spacing="2" display="flex" alignItems="center">
+      <Text>—</Text>
+      <Text>{props.date.toLocaleDateString()}</Text>
+    </HStack>
+  );
+};
+
+const BlogPage: NextPage<{
+  title?: string;
+  body?: string;
+}> = (props) => {
   const handleSubmit = async (event: React.SyntheticEvent) => {
     event.preventDefault();
 
@@ -46,7 +70,7 @@ export default function CreatePost() {
 
     const result = await res.json();
   };
-
+  const siteTitle = "Edit Post";
   return (
     <Layout>
       <Head>
@@ -108,7 +132,7 @@ export default function CreatePost() {
                 marginTop={{ base: "3", sm: "0" }}
               >
                 <Stack align={"center"}>
-                  <Heading fontSize={"4xl"}>Create a Post</Heading>
+                  <Heading fontSize={"4xl"}>Edit Post</Heading>
                   <Text fontSize={"lg"} color={"gray.600"}>
                     to share all of your cool{" "}
                     <Link color={"blue.400"}>articles</Link> ✌️
@@ -119,14 +143,20 @@ export default function CreatePost() {
                     <Stack spacing={4}>
                       <FormControl id="title">
                         <FormLabel htmlFor="title">Title</FormLabel>
-                        <Input type="text" id="title" name="title" required />
+                        <Input
+                          value={props.title}
+                          type="text"
+                          id="title"
+                          name="title"
+                          required
+                        />
                       </FormControl>
                       <FormControl id="body">
                         <FormLabel htmlFor="body">Content</FormLabel>
                         <Textarea
                           id="body"
                           name="body"
-                          placeholder="Here is your content"
+                          value={props.body}
                           rows={10}
                         />
                       </FormControl>
@@ -139,7 +169,7 @@ export default function CreatePost() {
                             bg: "blue.500",
                           }}
                         >
-                          Submit Post
+                          Update Post
                         </Button>
                       </Stack>
                     </Stack>
@@ -155,4 +185,33 @@ export default function CreatePost() {
       </Stack>
     </Layout>
   );
-}
+};
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const res = await fetch("https://jsonplaceholder.typicode.com/posts");
+  const posts = await res.json();
+
+  const post = posts.map((post) => post.id);
+  const paths = post.map((id) => ({ params: { id: id.toString() } }));
+
+  return {
+    paths,
+    fallback: false,
+  };
+};
+
+export const getStaticProps: GetStaticProps = async ({ params: { id } }) => {
+  // const blogs = (await import("../../lib/blogs.json")).default;
+  const res = await fetch("https://jsonplaceholder.typicode.com/posts");
+  const posts = await res.json();
+  const post = posts.find((post) => post.id.toString() === id);
+
+  return {
+    props: {
+      title: post?.title || null,
+      body: post?.body || null,
+    },
+  };
+};
+
+export default BlogPage;

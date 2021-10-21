@@ -49,103 +49,105 @@ export default function Home({
       <Head>
         <title>{siteTitle}</title>
       </Head>
-      <Container bg={bgColor} maxW="container.lg">
-        <VStack w="full" h="full" p={10} spacing={10} alignItems="flex-start">
-          <Stack spacing={4} as={Container} maxW={"3xl"} textAlign={"center"}>
-            <Heading fontSize={"3xl"}>Feature Articles</Heading>
-          </Stack>
-          <SimpleGrid columns={3} columnGap={6} rowGap={6} w="full">
-            {posts.slice(0, 6).map((post) => {
-              return (
-                <GridItem colSpan={colSpan}>
-                  <NextLink
-                    as={`/post/${post.id}`}
-                    href={`/post/[id]`}
-                    passHref
-                    key={`/post/${post.id}`}
-                  >
-                    <Link>
-                      <Box
-                        maxW="sm"
-                        borderWidth="1px"
-                        borderRadius="lg"
-                        overflow="hidden"
-                      >
-                        <Image
-                          src={property.imageUrl}
-                          alt={property.imageAlt}
-                        />
+      <Stack bg={bgColor}>
+        <Container maxW="container.xl">
+          <VStack w="full" h="full" p={10} spacing={10} alignItems="flex-start">
+            <Stack spacing={4} as={Container} maxW={"3xl"} textAlign={"center"}>
+              <Heading fontSize={"3xl"}>Feature Articles</Heading>
+            </Stack>
+            <SimpleGrid columns={3} columnGap={6} rowGap={6} w="full">
+              {posts.slice(0, 6).map((post) => {
+                return (
+                  <GridItem colSpan={colSpan}>
+                    <NextLink
+                      as={`/post/${post.id}`}
+                      href={`/post/[id]`}
+                      passHref
+                      key={`/post/${post.id}`}
+                    >
+                      <Link>
+                        <Box
+                          maxW="sm"
+                          borderWidth="1px"
+                          borderRadius="lg"
+                          overflow="hidden"
+                        >
+                          <Image
+                            src={property.imageUrl}
+                            alt={property.imageAlt}
+                          />
 
-                        <Box p="6">
-                          <Box
-                            mt="1"
-                            fontWeight="semibold"
-                            as="h4"
-                            lineHeight="tight"
-                            isTruncated
-                            fontSize="2xl"
-                            textTransform="capitalize"
-                          >
-                            {post.title}
-                          </Box>
-
-                          <Box mt="2" isTruncated textTransform="capitalize">
-                            {post.body}
-                          </Box>
-
-                          <Box display="flex" mt="2" alignItems="center">
-                            {Array(5)
-                              .fill("")
-                              .map((_, i) => (
-                                <StarIcon
-                                  key={i}
-                                  color={
-                                    i < property.rating
-                                      ? "teal.500"
-                                      : "gray.300"
-                                  }
-                                />
-                              ))}
+                          <Box p="6">
                             <Box
-                              as="span"
-                              ml="2"
-                              color="gray.600"
-                              fontSize="sm"
-                            >
-                              {property.reviewCount} reviews
-                            </Box>
-                          </Box>
-
-                          <Box display="flex" alignItems="baseline" mt="2">
-                            <Badge
-                              borderRadius="full"
-                              px="2"
-                              colorScheme="teal"
-                            >
-                              New
-                            </Badge>
-                            <Box
-                              color="gray.500"
+                              mt="1"
                               fontWeight="semibold"
-                              letterSpacing="wide"
-                              fontSize="xs"
-                              textTransform="uppercase"
-                              ml="2"
+                              as="h4"
+                              lineHeight="tight"
+                              isTruncated
+                              fontSize="2xl"
+                              textTransform="capitalize"
                             >
-                              {property.beds} comments &bull; {property.baths}{" "}
-                              likes
+                              {post.title}
+                            </Box>
+
+                            <Box mt="2" isTruncated textTransform="capitalize">
+                              {post.body}
+                            </Box>
+
+                            <Box display="flex" mt="2" alignItems="center">
+                              {Array(5)
+                                .fill("")
+                                .map((_, i) => (
+                                  <StarIcon
+                                    key={i}
+                                    color={
+                                      i < property.rating
+                                        ? "teal.500"
+                                        : "gray.300"
+                                    }
+                                  />
+                                ))}
+                              <Box
+                                as="span"
+                                ml="2"
+                                color="gray.600"
+                                fontSize="sm"
+                              >
+                                {property.reviewCount} reviews
+                              </Box>
+                            </Box>
+
+                            <Box display="flex" alignItems="baseline" mt="2">
+                              <Badge
+                                borderRadius="full"
+                                px="2"
+                                colorScheme="teal"
+                              >
+                                New
+                              </Badge>
+                              <Box
+                                color="gray.500"
+                                fontWeight="semibold"
+                                letterSpacing="wide"
+                                fontSize="xs"
+                                textTransform="uppercase"
+                                ml="2"
+                              >
+                                {property.beds} comments &bull; {property.baths}{" "}
+                                likes
+                              </Box>
                             </Box>
                           </Box>
                         </Box>
-                      </Box>
-                    </Link>
-                  </NextLink>
-                </GridItem>
-              );
-            })}
-          </SimpleGrid>
-        </VStack>
-      </Container>
+                      </Link>
+                    </NextLink>
+                  </GridItem>
+                );
+              })}
+            </SimpleGrid>
+          </VStack>
+        </Container>
+      </Stack>
       <Container maxW="container.xl">
         <Testimonials></Testimonials>
       </Container>

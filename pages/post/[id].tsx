@@ -1,7 +1,6 @@
-import NextLink from "next/link";
+import React from "react";
 import {
   Text,
-  Flex,
   Heading,
   Link,
   Container,
@@ -11,10 +10,18 @@ import {
   HStack,
   SpaceProps,
   Tag,
+  Wrap,
+  WrapItem,
+  Divider,
+  VStack,
+  useBreakpointValue,
+  Flex,
+  Stack,
+  Button,
 } from "@chakra-ui/react";
 import { GetStaticProps, GetStaticPaths, NextPage } from "next";
 import Layout from "../../components/common/layout";
-import { POINT_CONVERSION_COMPRESSED } from "constants";
+import BloggerProfile from "../../components/common/BloggerProfile";
 
 interface IBlogTags {
   tags: Array<string>;
@@ -43,13 +50,6 @@ interface BlogAuthorProps {
 export const BlogAuthor: React.FC<BlogAuthorProps> = (props) => {
   return (
     <HStack marginTop="2" spacing="2" display="flex" alignItems="center">
-      <Image
-        borderRadius="full"
-        boxSize="40px"
-        src="https://100k-faces.glitch.me/random-image"
-        alt={`Avatar of ${props.name}`}
-      />
-      <Text fontWeight="medium">{props.name}</Text>
       <Text>—</Text>
       <Text>{props.date.toLocaleDateString()}</Text>
     </HStack>
@@ -62,78 +62,87 @@ const BlogPage: NextPage<{
 }> = (props) => {
   return (
     <Layout>
-      <Container maxW={"7xl"} pt="20">
-        <Heading as="h1">Stories by Chakra Templates</Heading>
-        <Box
-          marginTop={{ base: "1", sm: "5" }}
-          display="flex"
-          flexDirection={{ base: "column", sm: "row" }}
-          justifyContent="space-between"
-        >
-          <Box
-            display="flex"
-            flex="1"
-            marginRight="3"
-            position="relative"
-            alignItems="center"
-          >
+      <Container maxW={"7xl"} pt="20"></Container>
+      <Stack minH={"80vh"} direction={{ base: "column", md: "row" }}>
+        <Flex pl={4} flex={3} justify={"left"} w={"full"}>
+          <Stack spacing={6} w={"full"}>
+            <Heading as="h1">Articles by John Doe</Heading>
             <Box
-              width={{ base: "100%", sm: "85%" }}
-              zIndex="2"
-              marginLeft={{ base: "0", sm: "5%" }}
-              marginTop="5%"
+              marginTop={{ base: "1", sm: "5" }}
+              display="flex"
+              flexDirection={{ base: "column", sm: "row" }}
+              justifyContent="space-between"
             >
-              <Link textDecoration="none" _hover={{ textDecoration: "none" }}>
-                <Image
-                  borderRadius="lg"
-                  src={
-                    "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=800&q=80"
-                  }
-                  alt="some good alt text"
-                  objectFit="contain"
-                />
-              </Link>
-            </Box>
-            <Box zIndex="1" width="100%" position="absolute" height="100%">
               <Box
-                bgGradient={useColorModeValue(
-                  "radial(orange.600 1px, transparent 1px)",
-                  "radial(orange.300 1px, transparent 1px)"
-                )}
-                backgroundSize="20px 20px"
-                opacity="0.4"
-                height="100%"
-              />
+                display="flex"
+                flex="1"
+                marginRight="3"
+                position="relative"
+                alignItems="center"
+              >
+                <Box
+                  width={{ base: "100%", sm: "85%" }}
+                  zIndex="2"
+                  marginLeft={{ base: "0", sm: "5%" }}
+                  marginTop="5%"
+                >
+                  <Link
+                    textDecoration="none"
+                    _hover={{ textDecoration: "none" }}
+                  >
+                    <Image
+                      borderRadius="lg"
+                      src={"https://source.unsplash.com/random/800x600"}
+                      alt="some good alt text"
+                      objectFit="contain"
+                    />
+                  </Link>
+                </Box>
+                <Box zIndex="1" width="100%" position="absolute" height="100%">
+                  <Box
+                    bgGradient={useColorModeValue(
+                      "radial(orange.600 1px, transparent 1px)",
+                      "radial(orange.300 1px, transparent 1px)"
+                    )}
+                    backgroundSize="20px 20px"
+                    opacity="0.4"
+                    height="100%"
+                  />
+                </Box>
+              </Box>
+              <Box
+                display="flex"
+                flex="1"
+                flexDirection="column"
+                justifyContent="center"
+                marginTop={{ base: "3", sm: "0" }}
+              >
+                <BlogTags tags={["Engineering", "Product"]} />
+                <Heading marginTop="1">
+                  <Link
+                    textDecoration="none"
+                    _hover={{ textDecoration: "none" }}
+                  >
+                    {props.title}
+                  </Link>
+                </Heading>
+                <Text
+                  as="p"
+                  marginTop="2"
+                  color={useColorModeValue("gray.700", "gray.200")}
+                  fontSize="lg"
+                >
+                  {props.body}
+                </Text>
+                <BlogAuthor name="John Doe" date={new Date()} />
+              </Box>
             </Box>
-          </Box>
-          <Box
-            display="flex"
-            flex="1"
-            flexDirection="column"
-            justifyContent="center"
-            marginTop={{ base: "3", sm: "0" }}
-          >
-            <BlogTags tags={["Engineering", "Product"]} />
-            <Heading marginTop="1">
-              <Link textDecoration="none" _hover={{ textDecoration: "none" }}>
-                {props.title}
-              </Link>
-            </Heading>
-            <Text
-              as="p"
-              marginTop="2"
-              color={useColorModeValue("gray.700", "gray.200")}
-              fontSize="lg"
-            >
-              {props.body}
-            </Text>
-            <BlogAuthor
-              name="John Doe"
-              date={new Date("2021-04-06T19:01:27Z")}
-            />
-          </Box>
-        </Box>
-      </Container>
+          </Stack>
+        </Flex>
+        <Flex flex={1}>
+          <BloggerProfile />
+        </Flex>
+      </Stack>
     </Layout>
   );
 };
