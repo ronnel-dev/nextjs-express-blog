@@ -45,6 +45,7 @@ export default function CreatePost() {
     });
 
     const result = await res.json();
+    console.log(result);
   };
 
   return (

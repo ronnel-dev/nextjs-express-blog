@@ -43,10 +43,11 @@ export const BlogAuthor: React.FC<BlogAuthorProps> = (props) => {
 };
 
 const BlogPage: NextPage<{
+  id?: number;
   title?: string;
   body?: string;
 }> = (props) => {
-  const handleSubmit = async (event: React.SyntheticEvent) => {
+  const handleUpdateSubmit = async (event: React.SyntheticEvent) => {
     event.preventDefault();
 
     const target = event.target as typeof event.target & {
@@ -55,20 +56,25 @@ const BlogPage: NextPage<{
     };
     const title = target.title.value;
     const body = target.body.value;
+    const id = props.id;
 
-    const res = await fetch("https://jsonplaceholder.typicode.com/posts", {
-      body: JSON.stringify({
-        userId: 1,
-        title: title,
-        body: body,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-      method: "POST",
-    });
+    const res = await fetch(
+      `https://jsonplaceholder.typicode.com/posts/${id}`,
+      {
+        body: JSON.stringify({
+          userId: 1,
+          title: title,
+          body: body,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "PUT",
+      }
+    );
 
     const result = await res.json();
+    console.log(result);
   };
   const siteTitle = "Edit Post";
   return (
@@ -139,12 +145,12 @@ const BlogPage: NextPage<{
                   </Text>
                 </Stack>
                 <Stack p={8}>
-                  <form onSubmit={handleSubmit}>
+                  <form onSubmit={handleUpdateSubmit} key={props.id}>
                     <Stack spacing={4}>
                       <FormControl id="title">
                         <FormLabel htmlFor="title">Title</FormLabel>
                         <Input
-                          value={props.title}
+                          defaultValue={props.title}
                           type="text"
                           id="title"
                           name="title"
@@ -156,7 +162,7 @@ const BlogPage: NextPage<{
                         <Textarea
                           id="body"
                           name="body"
-                          value={props.body}
+                          defaultValue={props.body}
                           rows={10}
                         />
                       </FormControl>
@@ -208,6 +214,7 @@ export const getStaticProps: GetStaticProps = async ({ params: { id } }) => {
 
   return {
     props: {
+      id: post?.id || null,
       title: post?.title || null,
       body: post?.body || null,
     },
