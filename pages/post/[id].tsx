@@ -10,18 +10,13 @@ import {
   HStack,
   SpaceProps,
   Tag,
-  Wrap,
-  WrapItem,
-  Divider,
-  VStack,
-  useBreakpointValue,
   Flex,
   Stack,
-  Button,
 } from "@chakra-ui/react";
-import { GetStaticProps, GetStaticPaths, NextPage } from "next";
+import { NextPage, GetServerSideProps } from "next";
 import Layout from "../../components/common/layout";
 import BloggerProfile from "../../components/common/BloggerProfile";
+import ErrorPage from "next/error";
 
 interface IBlogTags {
   tags: Array<string>;
@@ -60,6 +55,9 @@ const BlogPage: NextPage<{
   title?: string;
   body?: string;
 }> = (props) => {
+  if (!props.title) {
+    return <ErrorPage statusCode={404} />;
+  }
   return (
     <Layout>
       <Container maxW={"7xl"} pt="20"></Container>
@@ -147,31 +145,25 @@ const BlogPage: NextPage<{
   );
 };
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const res = await fetch("https://jsonplaceholder.typicode.com/posts");
-  const posts = await res.json();
+export const getServerSideProps: GetServerSideProps = async ({
+  params: { id },
+}) => {
+  try {
+    const res = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`);
+    const post = await res.json();
 
-  const post = posts.map((post) => post.id);
-  const paths = post.map((id) => ({ params: { id: id.toString() } }));
-
-  return {
-    paths,
-    fallback: false,
-  };
-};
-
-export const getStaticProps: GetStaticProps = async ({ params: { id } }) => {
-  // const blogs = (await import("../../lib/blogs.json")).default;
-  const res = await fetch("https://jsonplaceholder.typicode.com/posts");
-  const posts = await res.json();
-  const post = posts.find((post) => post.id.toString() === id);
-
-  return {
-    props: {
-      title: post?.title || null,
-      body: post?.body || null,
-    },
-  };
+    return {
+      props: {
+        title: post?.title || null,
+        body: post?.body || null,
+      },
+    };
+  } catch (error) {
+    error.statusCode = 404;
+    return {
+      props: {},
+    };
+  }
 };
 
 export default BlogPage;

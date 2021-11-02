@@ -8,13 +8,6 @@ import {
   Image,
   useColorModeValue,
   HStack,
-  SpaceProps,
-  Tag,
-  Wrap,
-  WrapItem,
-  Divider,
-  VStack,
-  useBreakpointValue,
   Flex,
   Stack,
   Button,
@@ -23,10 +16,11 @@ import {
   FormControl,
   FormLabel,
 } from "@chakra-ui/react";
-import { GetStaticProps, GetStaticPaths, NextPage } from "next";
+import { NextPage, GetServerSideProps } from "next";
 import Layout from "../../components/common/layout";
 import BloggerProfile from "../../components/common/BloggerProfile";
 import Head from "next/head";
+import ErrorPage from "next/error";
 
 interface BlogAuthorProps {
   date: Date;
@@ -47,6 +41,10 @@ const BlogPage: NextPage<{
   title?: string;
   body?: string;
 }> = (props) => {
+  if (!props.title) {
+    return <ErrorPage statusCode={404} />;
+  }
+
   const handleUpdateSubmit = async (event: React.SyntheticEvent) => {
     event.preventDefault();
 
@@ -193,32 +191,26 @@ const BlogPage: NextPage<{
   );
 };
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const res = await fetch("https://jsonplaceholder.typicode.com/posts");
-  const posts = await res.json();
+export const getServerSideProps: GetServerSideProps = async ({
+  params: { id },
+}) => {
+  try {
+    const res = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`);
+    const post = await res.json();
 
-  const post = posts.map((post) => post.id);
-  const paths = post.map((id) => ({ params: { id: id.toString() } }));
-
-  return {
-    paths,
-    fallback: false,
-  };
-};
-
-export const getStaticProps: GetStaticProps = async ({ params: { id } }) => {
-  // const blogs = (await import("../../lib/blogs.json")).default;
-  const res = await fetch("https://jsonplaceholder.typicode.com/posts");
-  const posts = await res.json();
-  const post = posts.find((post) => post.id.toString() === id);
-
-  return {
-    props: {
-      id: post?.id || null,
-      title: post?.title || null,
-      body: post?.body || null,
-    },
-  };
+    return {
+      props: {
+        id: post?.id || null,
+        title: post?.title || null,
+        body: post?.body || null,
+      },
+    };
+  } catch (error) {
+    error.statusCode = 404;
+    return {
+      props: {},
+    };
+  }
 };
 
 export default BlogPage;

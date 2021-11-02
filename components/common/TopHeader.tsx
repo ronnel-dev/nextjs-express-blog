@@ -103,6 +103,11 @@ export default function TopHeader() {
             onClick={toggleColorMode}
             size={"sm"}
           ></IconButton>
+          <Link href={`/login`}>
+            <Button colorScheme="teal" size="sm">
+              Sign In
+            </Button>
+          </Link>
           <Menu>
             <MenuButton
               as={Button}
