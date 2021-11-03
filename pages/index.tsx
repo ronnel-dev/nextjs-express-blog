@@ -15,20 +15,16 @@ import {
   Stack,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { GetStaticProps } from "next";
+import { GetStaticProps, InferGetServerSidePropsType } from "next";
 import NextLink from "next/link";
 import { StarIcon } from "@chakra-ui/icons";
+import { getPosts } from "../api/postService";
+import { IPost } from "../Interface/interfaces";
+import { getServerSideProps } from "./post/[id]";
 
 export default function Home({
   posts,
-}: {
-  posts: {
-    userId?: number;
-    id?: number;
-    title?: string;
-    body?: string;
-  }[];
-}) {
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const bgColor = useColorModeValue("gray.50", "whiteAlpha.50");
   const property = {
     imageUrl:
@@ -154,8 +150,7 @@ export default function Home({
 }
 
 export const getStaticProps: GetStaticProps = async () => {
-  const res = await fetch("https://jsonplaceholder.typicode.com/posts");
-  const posts = await res.json();
+  const posts: IPost[] = await getPosts();
 
   return {
     props: { posts },

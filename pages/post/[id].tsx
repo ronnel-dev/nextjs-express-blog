@@ -16,7 +16,8 @@ import {
 import { NextPage, GetServerSideProps } from "next";
 import Layout from "../../components/common/layout";
 import BloggerProfile from "../../components/common/BloggerProfile";
-import ErrorPage from "next/error";
+import { IPost } from "../../Interface/interfaces";
+import { getPost } from "../../api/postService";
 
 interface IBlogTags {
   tags: Array<string>;
@@ -51,13 +52,7 @@ export const BlogAuthor: React.FC<BlogAuthorProps> = (props) => {
   );
 };
 
-const BlogPage: NextPage<{
-  title?: string;
-  body?: string;
-}> = (props) => {
-  if (!props.title) {
-    return <ErrorPage statusCode={404} />;
-  }
+const BlogPage: NextPage<IPost> = (props) => {
   return (
     <Layout>
       <Container maxW={"7xl"} pt="20"></Container>
@@ -148,22 +143,11 @@ const BlogPage: NextPage<{
 export const getServerSideProps: GetServerSideProps = async ({
   params: { id },
 }) => {
-  try {
-    const res = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`);
-    const post = await res.json();
+  const post = await getPost(Number(id));
 
-    return {
-      props: {
-        title: post?.title || null,
-        body: post?.body || null,
-      },
-    };
-  } catch (error) {
-    error.statusCode = 404;
-    return {
-      props: {},
-    };
-  }
+  return {
+    props: post,
+  };
 };
 
 export default BlogPage;
