@@ -24,6 +24,28 @@ export const getPosts = async (): Promise<IPost[]> => {
   }
 };
 
+export const createPost = async (payload: IPost): Promise<IPost> => {
+  try {
+    const res = await fetch(`https://jsonplaceholder.typicode.com/posts/`, {
+      body: JSON.stringify({
+        userId: payload.userId,
+        title: payload.title,
+        body: payload.body,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+    });
+
+    const result = await res.json();
+    return result;
+  } catch (error) {
+    error.statusCode = 404;
+    return {};
+  }
+};
+
 export const editPost = async (payload: IPost): Promise<IPost> => {
   try {
     const res = await fetch(

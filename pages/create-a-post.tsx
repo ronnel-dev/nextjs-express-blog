@@ -18,6 +18,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import BloggerProfile from "../components/common/BloggerProfile";
+import { createPost } from "../api/postService";
 
 export default function CreatePost() {
   const siteTitle = "Create a Post";
@@ -32,19 +33,13 @@ export default function CreatePost() {
     const title = target.title.value;
     const body = target.body.value;
 
-    const res = await fetch("https://jsonplaceholder.typicode.com/posts", {
-      body: JSON.stringify({
-        userId: 1,
-        title: title,
-        body: body,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-      method: "POST",
-    });
+    const payload = {
+      title: title,
+      body: body,
+      userId: 1,
+    };
 
-    const result = await res.json();
+    const result = await createPost(payload);
     console.log(result);
   };
 
