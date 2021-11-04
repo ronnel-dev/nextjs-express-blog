@@ -20,7 +20,8 @@ import { NextPage, GetServerSideProps } from "next";
 import Layout from "../../components/common/layout";
 import BloggerProfile from "../../components/common/BloggerProfile";
 import Head from "next/head";
-import ErrorPage from "next/error";
+import { editPost, getPost } from "../../api/postService";
+import { IPost } from "../../Interface/interfaces";
 
 interface BlogAuthorProps {
   date: Date;
@@ -36,15 +37,7 @@ export const BlogAuthor: React.FC<BlogAuthorProps> = (props) => {
   );
 };
 
-const BlogPage: NextPage<{
-  id?: number;
-  title?: string;
-  body?: string;
-}> = (props) => {
-  if (!props.title) {
-    return <ErrorPage statusCode={404} />;
-  }
-
+const BlogPage: NextPage<IPost> = (props) => {
   const handleUpdateSubmit = async (event: React.SyntheticEvent) => {
     event.preventDefault();
 
@@ -52,26 +45,13 @@ const BlogPage: NextPage<{
       title: { value: string };
       body: { value: string };
     };
-    const title = target.title.value;
-    const body = target.body.value;
-    const id = props.id;
+    const payload = {
+      title: target.title.value,
+      body: target.body.value,
+      id: props.id,
+    };
 
-    const res = await fetch(
-      `https://jsonplaceholder.typicode.com/posts/${id}`,
-      {
-        body: JSON.stringify({
-          userId: 1,
-          title: title,
-          body: body,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-        method: "PUT",
-      }
-    );
-
-    const result = await res.json();
+    const result = await editPost(payload);
     console.log(result);
   };
   const siteTitle = "Edit Post";
@@ -194,23 +174,11 @@ const BlogPage: NextPage<{
 export const getServerSideProps: GetServerSideProps = async ({
   params: { id },
 }) => {
-  try {
-    const res = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`);
-    const post = await res.json();
+  const post = await getPost(Number(id));
 
-    return {
-      props: {
-        id: post?.id || null,
-        title: post?.title || null,
-        body: post?.body || null,
-      },
-    };
-  } catch (error) {
-    error.statusCode = 404;
-    return {
-      props: {},
-    };
-  }
+  return {
+    props: post,
+  };
 };
 
 export default BlogPage;

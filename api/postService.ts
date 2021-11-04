@@ -23,3 +23,49 @@ export const getPosts = async (): Promise<IPost[]> => {
     return [];
   }
 };
+
+export const editPost = async (payload: IPost): Promise<IPost> => {
+  try {
+    const res = await fetch(
+      `https://jsonplaceholder.typicode.com/posts/${payload.id}`,
+      {
+        body: JSON.stringify({
+          userId: 1,
+          title: payload.title,
+          body: payload.body,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "PUT",
+      }
+    );
+
+    const result = await res.json();
+    return result;
+  } catch (error) {
+    error.statusCode = 404;
+    return {};
+  }
+};
+
+export const deletePost = async (id: number): Promise<IPost> => {
+  try {
+    const res = await fetch(
+      `https://jsonplaceholder.typicode.com/posts/${id}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "DELETE",
+      }
+    );
+
+    const result = await res.json();
+
+    return result;
+  } catch (error) {
+    error.statusCode = 404;
+    return {};
+  }
+};

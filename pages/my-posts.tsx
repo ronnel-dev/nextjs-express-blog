@@ -1,6 +1,6 @@
 import Head from "next/head";
 import Layout from "../components/common/layout";
-import { GetStaticProps } from "next";
+import { GetStaticProps, InferGetServerSidePropsType } from "next";
 import NextLink from "next/link";
 import Header from "../components/common/Header";
 import {
@@ -20,46 +20,21 @@ import {
   Spacer,
   Button,
 } from "@chakra-ui/react";
+import { deletePost, getPosts } from "../api/postService";
+import { IPost } from "../Interface/interfaces";
+import { getServerSideProps } from "./edit-post/[id]";
 
 export default function MyArticles({
   myArticles,
-}: {
-  myArticles: {
-    userId?: number;
-    id?: number;
-    title?: string;
-    body?: string;
-  }[];
-}) {
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const siteTitle = "My Articles";
 
   const bgColor = useColorModeValue("gray.50", "whiteAlpha.50");
-  const property = {
-    imageUrl:
-      "https://media.istockphoto.com/photos/indian-young-woman-teacher-student-elearning-remote-training-watching-picture-id1262282977?k=20&m=1262282977&s=612x612&w=0&h=NW33DZxGi2YGQm3KKms_DBt2HDBHlY0t7ClhigAxeS8=",
-    imageAlt: "Rear view of modern home with pool",
-    beds: 3,
-    baths: 2,
-    title: "Modern home in city center in the heart of historic Los Angeles",
-    formattedPrice: "$1,900.00",
-    reviewCount: 34,
-    rating: 4,
-  };
 
   const colSpan = useBreakpointValue({ base: 3, md: 1 });
 
   const removePost = async (id: number) => {
-    const res = await fetch(
-      `https://jsonplaceholder.typicode.com/posts/${id}`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        method: "DELETE",
-      }
-    );
-
-    const result = await res.json();
+    const result = await deletePost(id);
     console.log(result);
   };
 
@@ -166,9 +141,7 @@ export default function MyArticles({
 }
 
 export const getStaticProps: GetStaticProps = async () => {
-  // const blogs = (await import("../lib/blogs.json")).default;
-  const res = await fetch("https://jsonplaceholder.typicode.com/posts");
-  const myArticles = await res.json();
+  const myArticles: IPost[] = await getPosts();
 
   return {
     props: { myArticles },
