@@ -34,11 +34,24 @@ class MockClient implements IPostClient {
   }
 }
 
-describe("GET /post", () => {
+describe("GET /post by id", () => {
   test("getPost", async () => {
     const postService = new PostService(new PostClient());
     return await postService.getPost(1).then((data) => {
       expect(data.id).toBe(1);
+    });
+  });
+});
+
+describe("GET /posts", () => {
+  test("getPost", async () => {
+    const postService = new PostService(new PostClient());
+    return await postService.getPosts().then((data) => {
+      expect(data.length).toBeGreaterThan(0);
+      expect(data[0]).toHaveProperty("id");
+      expect(data[0]).toHaveProperty("userId");
+      expect(data[0]).toHaveProperty("title");
+      expect(data[0]).toHaveProperty("body");
     });
   });
 });
