@@ -20,9 +20,9 @@ import {
   Spacer,
   Button,
 } from "@chakra-ui/react";
-import { deletePost, getPosts } from "../api/postService";
-import { IPost } from "../Interface/interfaces";
+import { PostService } from "../api/postService";
 import { getServerSideProps } from "./edit-post/[id]";
+import { PostClient } from "../api/clients/postClient";
 
 export default function MyArticles({
   myArticles,
@@ -34,8 +34,14 @@ export default function MyArticles({
   const colSpan = useBreakpointValue({ base: 3, md: 1 });
 
   const removePost = async (id: number) => {
-    const result = await deletePost(id);
-    console.log(result);
+    try {
+      const service = new PostService(new PostClient());
+      const deletedPost = await service.deletePost(id);
+
+      console.log(deletedPost);
+    } catch (error) {
+      error.statusCode = 404;
+    }
   };
 
   return (
@@ -141,9 +147,13 @@ export default function MyArticles({
 }
 
 export const getStaticProps: GetStaticProps = async () => {
-  const myArticles: IPost[] = await getPosts();
-
-  return {
-    props: { myArticles },
-  };
+  try {
+    const service = new PostService(new PostClient());
+    const myArticles = await service.getPosts();
+    return {
+      props: { myArticles },
+    };
+  } catch (error) {
+    error.statusCode = 404;
+  }
 };

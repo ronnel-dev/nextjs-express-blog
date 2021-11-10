@@ -8,3 +8,11 @@ export interface IPostRepository {
   getPosts(): Promise<Array<IPost>>;
   getPost(id: number): Promise<IPost>;
 }
+
+export interface IPostClient {
+  index(): Promise<Array<IPost>>;
+  show(id: number): Promise<IPost>;
+  store(payload: IPost): Promise<IPost>;
+  update(payload: IPost): Promise<IPost>;
+  destroy(id: number): Promise<IPost>;
+}

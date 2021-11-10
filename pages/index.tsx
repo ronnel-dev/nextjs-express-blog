@@ -18,9 +18,10 @@ import {
 import { GetStaticProps, InferGetServerSidePropsType } from "next";
 import NextLink from "next/link";
 import { StarIcon } from "@chakra-ui/icons";
-import { getPosts } from "../api/postService";
+import { getPosts, PostService } from "../api/postService";
 import { IPost } from "../Interface/interfaces";
 import { getServerSideProps } from "./post/[id]";
+import { PostClient } from "../api/clients/postClient";
 
 export default function Home({
   posts,
@@ -150,9 +151,13 @@ export default function Home({
 }
 
 export const getStaticProps: GetStaticProps = async () => {
-  const posts: IPost[] = await getPosts();
-
-  return {
-    props: { posts },
-  };
+  try {
+    const service = new PostService(new PostClient());
+    const posts = await service.getPosts();
+    return {
+      props: { posts },
+    };
+  } catch (error) {
+    error.statusCode = 404;
+  }
 };

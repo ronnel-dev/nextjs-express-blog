@@ -20,8 +20,9 @@ import { NextPage, GetServerSideProps } from "next";
 import Layout from "../../components/common/layout";
 import BloggerProfile from "../../components/common/BloggerProfile";
 import Head from "next/head";
-import { editPost, getPost } from "../../api/postService";
+import { editPost, getPost, PostService } from "../../api/postService";
 import { IPost } from "../../Interface/interfaces";
+import { PostClient } from "../../api/clients/postClient";
 
 interface BlogAuthorProps {
   date: Date;
@@ -51,8 +52,14 @@ const BlogPage: NextPage<IPost> = (props) => {
       id: props.id,
     };
 
-    const result = await editPost(payload);
-    console.log(result);
+    try {
+      const service = new PostService(new PostClient());
+      const updatedPost = await service.editPost(payload);
+
+      console.log(updatedPost);
+    } catch (error) {
+      error.statusCode = 404;
+    }
   };
   const siteTitle = "Edit Post";
   return (
@@ -174,11 +181,15 @@ const BlogPage: NextPage<IPost> = (props) => {
 export const getServerSideProps: GetServerSideProps = async ({
   params: { id },
 }) => {
-  const post = await getPost(Number(id));
-
-  return {
-    props: post,
-  };
+  try {
+    const service = new PostService(new PostClient());
+    const post = await service.getPost(Number(id));
+    return {
+      props: post,
+    };
+  } catch (error) {
+    error.statusCode = 404;
+  }
 };
 
 export default BlogPage;

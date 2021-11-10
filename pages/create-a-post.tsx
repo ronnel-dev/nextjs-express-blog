@@ -18,7 +18,8 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import BloggerProfile from "../components/common/BloggerProfile";
-import { createPost } from "../api/postService";
+import { createPost, PostService } from "../api/postService";
+import { PostClient } from "../api/clients/postClient";
 
 export default function CreatePost() {
   const siteTitle = "Create a Post";
@@ -39,8 +40,14 @@ export default function CreatePost() {
       userId: 1,
     };
 
-    const result = await createPost(payload);
-    console.log(result);
+    try {
+      const service = new PostService(new PostClient());
+      const createdPost = await service.createPost(payload);
+
+      console.log(createdPost);
+    } catch (error) {
+      error.statusCode = 404;
+    }
   };
 
   return (

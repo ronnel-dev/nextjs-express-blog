@@ -1,93 +1,26 @@
 import { IPost } from "../Interface/interfaces";
+import { PostClient } from "./clients/postClient";
 
-export const getPost = async (id: number): Promise<IPost> => {
-  try {
-    const res = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`);
-    const post: IPost = await res.json();
+export class PostService {
+  public constructor(private postClient: PostClient) {}
 
-    return post;
-  } catch (error) {
-    error.statusCode = 404;
-    return {};
+  public async getPosts(): Promise<Array<IPost>> {
+    return this.postClient.index();
   }
-};
 
-export const getPosts = async (): Promise<IPost[]> => {
-  try {
-    const res = await fetch(`https://jsonplaceholder.typicode.com/posts`);
-    const post: IPost[] = await res.json();
-
-    return post;
-  } catch (error) {
-    error.statusCode = 404;
-    return [];
+  public async getPost(id: number): Promise<IPost> {
+    return this.postClient.show(id);
   }
-};
 
-export const createPost = async (payload: IPost): Promise<IPost> => {
-  try {
-    const res = await fetch(`https://jsonplaceholder.typicode.com/posts/`, {
-      body: JSON.stringify({
-        userId: payload.userId,
-        title: payload.title,
-        body: payload.body,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-      method: "POST",
-    });
-
-    const result = await res.json();
-    return result;
-  } catch (error) {
-    error.statusCode = 404;
-    return {};
+  public async createPost(payload: IPost): Promise<IPost> {
+    return this.postClient.store(payload);
   }
-};
 
-export const editPost = async (payload: IPost): Promise<IPost> => {
-  try {
-    const res = await fetch(
-      `https://jsonplaceholder.typicode.com/posts/${payload.id}`,
-      {
-        body: JSON.stringify({
-          userId: 1,
-          title: payload.title,
-          body: payload.body,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-        method: "PUT",
-      }
-    );
-
-    const result = await res.json();
-    return result;
-  } catch (error) {
-    error.statusCode = 404;
-    return {};
+  public async editPost(payload: IPost): Promise<IPost> {
+    return this.postClient.update(payload);
   }
-};
 
-export const deletePost = async (id: number): Promise<IPost> => {
-  try {
-    const res = await fetch(
-      `https://jsonplaceholder.typicode.com/posts/${id}`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        method: "DELETE",
-      }
-    );
-
-    const result = await res.json();
-
-    return result;
-  } catch (error) {
-    error.statusCode = 404;
-    return {};
+  public async deletePost(id: number): Promise<IPost> {
+    return this.postClient.destroy(id);
   }
-};
+}

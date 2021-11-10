@@ -17,7 +17,8 @@ import { NextPage, GetServerSideProps } from "next";
 import Layout from "../../components/common/layout";
 import BloggerProfile from "../../components/common/BloggerProfile";
 import { IPost } from "../../Interface/interfaces";
-import { getPost } from "../../api/postService";
+import { getPost, PostService } from "../../api/postService";
+import { PostClient } from "../../api/clients/postClient";
 
 interface IBlogTags {
   tags: Array<string>;
@@ -143,11 +144,15 @@ const BlogPage: NextPage<IPost> = (props) => {
 export const getServerSideProps: GetServerSideProps = async ({
   params: { id },
 }) => {
-  const post = await getPost(Number(id));
-
-  return {
-    props: post,
-  };
+  try {
+    const service = new PostService(new PostClient());
+    const post = await service.getPost(Number(id));
+    return {
+      props: post,
+    };
+  } catch (error) {
+    error.statusCode = 404;
+  }
 };
 
 export default BlogPage;
