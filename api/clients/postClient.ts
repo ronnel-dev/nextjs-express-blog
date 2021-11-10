@@ -1,7 +1,8 @@
 import { IPost, IPostClient } from "../../Interface/interfaces";
+import * as fetch from "node-fetch";
 
 export class PostClient implements IPostClient {
-  private API_URL = "https://jsonplaceholder.typicode.com/posts";
+  public API_URL = "https://jsonplaceholder.typicode.com/posts";
 
   public async index(): Promise<Array<IPost>> {
     const res = await fetch(`${this.API_URL}`);
