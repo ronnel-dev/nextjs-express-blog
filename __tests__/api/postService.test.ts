@@ -44,7 +44,7 @@ describe("GET /post by id", () => {
 });
 
 describe("GET /posts", () => {
-  test("getPost", async () => {
+  test("getPosts", async () => {
     const postService = new PostService(new PostClient());
     return await postService.getPosts().then((data) => {
       expect(data.length).toBeGreaterThan(0);
