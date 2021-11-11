@@ -1,11 +1,10 @@
 import { promises as fs } from "fs";
-import { PostClient } from "../../api/clients/postClient";
 import { PostService } from "../../api/postService";
 import { IPost, IPostClient } from "../../Interface/interfaces";
 
 class MockClient implements IPostClient {
   private async readFile(): Promise<IPost> {
-    const file: any = await fs.readFile(`${__dirname}/post.json`);
+    const file: any = await fs.readFile(`${__dirname}/post.json`, "utf-8");
     return file;
   }
 
@@ -14,6 +13,7 @@ class MockClient implements IPostClient {
   public async index(): Promise<Array<IPost>> {
     const posts = [];
     posts.push(await this.readFile());
+
     return posts;
   }
 
@@ -36,7 +36,7 @@ class MockClient implements IPostClient {
 
 describe("GET /post by id", () => {
   test("getPost", async () => {
-    const postService = new PostService(new PostClient());
+    const postService = new PostService(new MockClient());
     return await postService.getPost(1).then((data) => {
       expect(data.id).toBe(1);
     });
@@ -45,7 +45,7 @@ describe("GET /post by id", () => {
 
 describe("GET /posts", () => {
   test("getPosts", async () => {
-    const postService = new PostService(new PostClient());
+    const postService = new PostService(new MockClient());
     return await postService.getPosts().then((data) => {
       expect(data.length).toBeGreaterThan(0);
       expect(data[0]).toHaveProperty("id");
