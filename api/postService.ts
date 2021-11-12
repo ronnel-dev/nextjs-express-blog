@@ -1,8 +1,7 @@
-import { IPost } from "../Interface/interfaces";
-import { PostClient } from "./clients/postClient";
+import { IPost, IPostClient } from "../Interface/interfaces";
 
 export class PostService {
-  public constructor(private postClient: PostClient) {}
+  public constructor(private postClient: IPostClient) {}
 
   public async getPosts(): Promise<Array<IPost>> {
     return this.postClient.index();

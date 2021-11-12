@@ -5,7 +5,7 @@ import { IPost, IPostClient } from "../../Interface/interfaces";
 class MockClient implements IPostClient {
   private async readFile(): Promise<IPost> {
     const file: any = await fs.readFile(`${__dirname}/post.json`, "utf-8");
-    return file;
+    return JSON.parse(file) as IPost;
   }
 
   public API_URL = "https://jsonplaceholder.typicode.com/posts";
@@ -37,8 +37,8 @@ class MockClient implements IPostClient {
 describe("GET /post by id", () => {
   test("getPost", async () => {
     const postService = new PostService(new MockClient());
-    return await postService.getPost(1).then((data) => {
-      expect(data.id).toBe(1);
+    return await postService.getPost(1).then(async (data) => {
+      expect(data.id).toEqual(1);
     });
   });
 });
