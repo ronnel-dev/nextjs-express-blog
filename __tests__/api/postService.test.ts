@@ -22,36 +22,93 @@ class MockClient implements IPostClient {
   }
 
   public async store(payload: IPost): Promise<IPost> {
-    return this.readFile();
+    const posts = [];
+    posts.push(await this.readFile());
+    posts.push(await payload);
+    const post = posts.find((post) => post.title === payload.title);
+
+    return post;
   }
 
   public async update(payload: IPost): Promise<IPost> {
-    return this.readFile();
+    const file: any = await fs.readFile(
+      `${__dirname}/post/${payload.id}.json`,
+      "utf-8"
+    );
+    const parse = JSON.parse(file);
+    parse.title = payload.title;
+    parse.body = payload.body;
+
+    return parse;
   }
 
   public async destroy(id: number): Promise<IPost> {
-    return this.readFile();
+    const file: any = await fs.readFile(
+      `${__dirname}/post/${id}.json`,
+      "utf-8"
+    );
+    const parse = JSON.parse(file);
+    if (parse.id === id) {
+      return {};
+    } else {
+      return parse;
+    }
   }
 }
-
-describe("GET /post by id", () => {
-  test("getPost", async () => {
-    const postService = new PostService(new MockClient());
-    return await postService.getPost(1).then(async (data) => {
-      expect(data.id).toEqual(1);
-    });
-  });
-});
 
 describe("GET /posts", () => {
   test("getPosts", async () => {
     const postService = new PostService(new MockClient());
     return await postService.getPosts().then((data) => {
       expect(data.length).toBeGreaterThan(0);
-      expect(data[0]).toHaveProperty("id");
-      expect(data[0]).toHaveProperty("userId");
-      expect(data[0]).toHaveProperty("title");
-      expect(data[0]).toHaveProperty("body");
+    });
+  });
+});
+
+describe("GET /post by id", () => {
+  test("getPost", async () => {
+    const postService = new PostService(new MockClient());
+    return await postService.getPost(1).then(async (data) => {
+      expect(data[0].id).toBe(1);
+    });
+  });
+});
+
+describe("POST /createPost", () => {
+  test("createPost", async () => {
+    const postService = new PostService(new MockClient());
+    const payload = {} as IPost;
+    payload.id = 101;
+    payload.userId = 2;
+    payload.title = "This is new title";
+    payload.body = "This is the body";
+
+    return await postService.createPost(payload).then(async (data) => {
+      expect(data).toEqual(payload);
+    });
+  });
+});
+
+describe("PUT /editPost", () => {
+  test("createPost", async () => {
+    const postService = new PostService(new MockClient());
+    const payload = {
+      id: 1,
+      userId: 1,
+      title: "This is edit title",
+      body: "This is edit body",
+    };
+    return await postService.editPost(payload).then(async (data) => {
+      expect(data).toEqual(payload);
+    });
+  });
+});
+
+describe("Delete /deletePost", () => {
+  test("createPost", async () => {
+    const postService = new PostService(new MockClient());
+    return await postService.deletePost(1).then(async (data) => {
+      expect(data).toEqual({});
     });
   });
 });
