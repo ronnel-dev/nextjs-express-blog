@@ -1,6 +1,6 @@
 export interface IPost {
   userId?: number;
-  id ?: number;
+  id?: number;
   title?: string;
   body?: string;
 }
@@ -15,4 +15,9 @@ export interface IPostClient {
   store(payload: IPost): Promise<IPost>;
   update(payload: IPost): Promise<IPost>;
   destroy(id: number): Promise<IPost>;
+}
+
+export interface IFormCreatePost {
+  title: string;
+  body: string;
 }

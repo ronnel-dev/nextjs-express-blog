@@ -18,32 +18,32 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import BloggerProfile from "../components/common/BloggerProfile";
-import { createPost, PostService } from "../api/postService";
+import { PostService } from "../api/postService";
 import { PostClient } from "../api/clients/postClient";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { IFormCreatePost } from "../Interface/interfaces";
 
 export default function CreatePost() {
   const siteTitle = "Create a Post";
 
-  const handleSubmit = async (event: React.SyntheticEvent) => {
-    event.preventDefault();
+  const {
+    register,
+    reset,
+    formState: { errors },
+    handleSubmit,
+  } = useForm<IFormCreatePost>();
 
-    const target = event.target as typeof event.target & {
-      title: { value: string };
-      body: { value: string };
-    };
-    const title = target.title.value;
-    const body = target.body.value;
-
+  const onSubmit: SubmitHandler<IFormCreatePost> = async (data, e) => {
     const payload = {
-      title: title,
-      body: body,
+      title: data.title,
+      body: data.body,
       userId: 1,
     };
 
     try {
       const service = new PostService(new PostClient());
       const createdPost = await service.createPost(payload);
-
+      reset();
       console.log(createdPost);
     } catch (error) {
       error.statusCode = 404;
@@ -118,11 +118,19 @@ export default function CreatePost() {
                   </Text>
                 </Stack>
                 <Stack p={8}>
-                  <form onSubmit={handleSubmit}>
+                  <form onSubmit={handleSubmit(onSubmit)}>
                     <Stack spacing={4}>
                       <FormControl id="title">
                         <FormLabel htmlFor="title">Title</FormLabel>
-                        <Input type="text" id="title" name="title" required />
+                        <Input
+                          id="title"
+                          name="title"
+                          placeholder="Title here..."
+                          {...register("title", { required: true })}
+                        />
+                        <Text color={"red"}>
+                          {errors.title && "Title is required"}
+                        </Text>
                       </FormControl>
                       <FormControl id="body">
                         <FormLabel htmlFor="body">Content</FormLabel>
@@ -131,7 +139,11 @@ export default function CreatePost() {
                           name="body"
                           placeholder="Here is your content"
                           rows={10}
+                          {...register("body", { required: true })}
                         />
+                        <Text color={"red"}>
+                          {errors.body && "Content is required"}
+                        </Text>
                       </FormControl>
                       <Stack spacing={10}>
                         <Button
