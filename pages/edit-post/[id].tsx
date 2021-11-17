@@ -21,8 +21,9 @@ import Layout from "../../components/common/layout";
 import BloggerProfile from "../../components/common/BloggerProfile";
 import Head from "next/head";
 import { editPost, getPost, PostService } from "../../api/postService";
-import { IPost } from "../../Interface/interfaces";
+import { IFormPost, IPost } from "../../Interface/interfaces";
 import { PostClient } from "../../api/clients/postClient";
+import { SubmitHandler, useForm } from "react-hook-form";
 
 interface BlogAuthorProps {
   date: Date;
@@ -39,16 +40,17 @@ export const BlogAuthor: React.FC<BlogAuthorProps> = (props) => {
 };
 
 const BlogPage: NextPage<IPost> = (props) => {
-  const handleUpdateSubmit = async (event: React.SyntheticEvent) => {
-    event.preventDefault();
+  const {
+    register,
+    reset,
+    formState: { errors },
+    handleSubmit,
+  } = useForm<IFormPost>();
 
-    const target = event.target as typeof event.target & {
-      title: { value: string };
-      body: { value: string };
-    };
+  const onSubmit: SubmitHandler<IFormPost> = async (data) => {
     const payload = {
-      title: target.title.value,
-      body: target.body.value,
+      title: data.title,
+      body: data.body,
       id: props.id,
     };
 
@@ -130,7 +132,7 @@ const BlogPage: NextPage<IPost> = (props) => {
                   </Text>
                 </Stack>
                 <Stack p={8}>
-                  <form onSubmit={handleUpdateSubmit} key={props.id}>
+                  <form onSubmit={handleSubmit(onSubmit)} key={props.id}>
                     <Stack spacing={4}>
                       <FormControl id="title">
                         <FormLabel htmlFor="title">Title</FormLabel>
@@ -139,8 +141,11 @@ const BlogPage: NextPage<IPost> = (props) => {
                           type="text"
                           id="title"
                           name="title"
-                          required
+                          {...register("title", { required: true })}
                         />
+                        <Text color={"red"}>
+                          {errors.title && "Title is required"}
+                        </Text>
                       </FormControl>
                       <FormControl id="body">
                         <FormLabel htmlFor="body">Content</FormLabel>
@@ -149,7 +154,11 @@ const BlogPage: NextPage<IPost> = (props) => {
                           name="body"
                           defaultValue={props.body}
                           rows={10}
+                          {...register("body", { required: true })}
                         />
+                        <Text color={"red"}>
+                          {errors.body && "Content is required"}
+                        </Text>
                       </FormControl>
                       <Stack spacing={10}>
                         <Button

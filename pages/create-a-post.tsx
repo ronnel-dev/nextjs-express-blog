@@ -21,7 +21,7 @@ import BloggerProfile from "../components/common/BloggerProfile";
 import { PostService } from "../api/postService";
 import { PostClient } from "../api/clients/postClient";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { IFormCreatePost } from "../Interface/interfaces";
+import { IFormPost } from "../Interface/interfaces";
 
 export default function CreatePost() {
   const siteTitle = "Create a Post";
@@ -31,9 +31,9 @@ export default function CreatePost() {
     reset,
     formState: { errors },
     handleSubmit,
-  } = useForm<IFormCreatePost>();
+  } = useForm<IFormPost>();
 
-  const onSubmit: SubmitHandler<IFormCreatePost> = async (data, e) => {
+  const onSubmit: SubmitHandler<IFormPost> = async (data) => {
     const payload = {
       title: data.title,
       body: data.body,

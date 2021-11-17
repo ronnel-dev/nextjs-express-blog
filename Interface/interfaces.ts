@@ -17,7 +17,7 @@ export interface IPostClient {
   destroy(id: number): Promise<IPost>;
 }
 
-export interface IFormCreatePost {
+export interface IFormPost {
   title: string;
   body: string;
 }
