@@ -24,6 +24,7 @@ import { PostService } from "../../api/postService";
 import { IFormPost, IPost } from "../../Interface/interfaces";
 import { PostClient } from "../../api/clients/postClient";
 import { SubmitHandler, useForm } from "react-hook-form";
+import CreatePost from "../../components/FormSchema/Form/CreatePost";
 
 interface BlogAuthorProps {
   date: Date;
@@ -40,28 +41,28 @@ export const BlogAuthor: React.FC<BlogAuthorProps> = (props) => {
 };
 
 const BlogPage: NextPage<IPost> = (props) => {
-  const {
-    register,
-    formState: { errors },
-    handleSubmit,
-  } = useForm<IFormPost>();
+  // const {
+  //   register,
+  //   formState: { errors },
+  //   handleSubmit,
+  // } = useForm<IFormPost>();
 
-  const onSubmit: SubmitHandler<IFormPost> = async (data) => {
-    const payload = {
-      title: data.Title,
-      body: data.Body,
-      id: props.id,
-    };
+  // const onSubmit: SubmitHandler<IFormPost> = async (data) => {
+  //   const payload = {
+  //     title: data.Title,
+  //     body: data.Body,
+  //     id: props.id,
+  //   };
 
-    try {
-      const service = new PostService(new PostClient());
-      const updatedPost = await service.editPost(payload);
+  //   try {
+  //     const service = new PostService(new PostClient());
+  //     const updatedPost = await service.editPost(payload);
 
-      console.log(updatedPost);
-    } catch (error) {
-      error.statusCode = 404;
-    }
-  };
+  //     console.log(updatedPost);
+  //   } catch (error) {
+  //     error.statusCode = 404;
+  //   }
+  // };
   const siteTitle = "Edit Post";
   return (
     <Layout>
@@ -131,7 +132,8 @@ const BlogPage: NextPage<IPost> = (props) => {
                   </Text>
                 </Stack>
                 <Stack p={8}>
-                  <form onSubmit={handleSubmit(onSubmit)} key={props.id}>
+                  <CreatePost props={props} />
+                  {/* <form onSubmit={handleSubmit(onSubmit)} key={props.id}>
                     <Stack spacing={4}>
                       <FormControl id="title">
                         <FormLabel htmlFor="title">Title</FormLabel>
@@ -172,7 +174,7 @@ const BlogPage: NextPage<IPost> = (props) => {
                         </Button>
                       </Stack>
                     </Stack>
-                  </form>
+                  </form> */}
                 </Stack>
               </Box>
             </Box>

@@ -22,7 +22,7 @@ const schema = yup
   })
   .required();
 
-export default function CreatePost() {
+export default function CreatePost({ props }) {
   const {
     register,
     reset,
@@ -32,18 +32,29 @@ export default function CreatePost() {
     resolver: yupResolver(schema),
   });
   const onSubmit = async (data: IFormPost) => {
-    const payload = {
-      title: data.Title,
-      body: data.Body,
-      userId: 1,
-    };
+    let payload = {};
+    if (!props) {
+      payload = {
+        title: data.Title,
+        body: data.Body,
+        userId: 1,
+      };
+    } else {
+      payload = {
+        title: data.Title,
+        body: data.Body,
+        id: props.id,
+      };
+    }
 
     try {
       const service = new PostService(new PostClient());
 
       const createdPost = await service.createPost(payload);
       console.log(createdPost);
-      reset();
+      if (!props) {
+        reset();
+      }
     } catch (error) {
       error.statusCode = 404;
     }
@@ -55,24 +66,24 @@ export default function CreatePost() {
         <FormControl id="Title">
           <FormLabel htmlFor="Title">Title</FormLabel>
           <Input
+            defaultValue={!props ? "" : props.title}
             id="Title"
             name="Title"
             placeholder="Title here..."
             {...register("Title", { required: true })}
           />
-          {/* <Text color={"red"}>{errors.title && "Title is required"}</Text> */}
           <Text color={"red"}>{errors.Title?.message}</Text>
         </FormControl>
         <FormControl id="Body">
           <FormLabel htmlFor="Body">Content</FormLabel>
           <Textarea
+            defaultValue={!props ? "" : props.body}
             id="Body"
             name="Body"
             placeholder="Here is your content"
             rows={10}
             {...register("Body", { required: true })}
           />
-          {/* <Text color={"red"}>{errors.body && "Content is required"}</Text> */}
           <Text color={"red"}>{errors.Body?.message}</Text>
         </FormControl>
         <Stack spacing={10}>

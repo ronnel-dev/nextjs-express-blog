@@ -17,6 +17,7 @@ import CreatePost from "../components/FormSchema/Form/CreatePost";
 
 export default function CreateAPost() {
   const siteTitle = "Create a Post";
+  const post = {};
 
   return (
     <Layout>
@@ -86,7 +87,7 @@ export default function CreateAPost() {
                   </Text>
                 </Stack>
                 <Stack p={8}>
-                  <CreatePost />
+                  <CreatePost post={post} />
                 </Stack>
               </Box>
             </Box>
