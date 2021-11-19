@@ -3,52 +3,20 @@ import Layout from "../components/common/layout";
 import {
   Flex,
   Box,
-  FormControl,
-  FormLabel,
-  Input,
   Stack,
   Link,
-  Button,
   Heading,
   Text,
   useColorModeValue,
-  Textarea,
   Container,
   Image,
 } from "@chakra-ui/react";
 import React from "react";
 import BloggerProfile from "../components/common/BloggerProfile";
-import { PostService } from "../api/postService";
-import { PostClient } from "../api/clients/postClient";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { IFormPost } from "../Interface/interfaces";
+import CreatePost from "../components/FormSchema/Form/CreatePost";
 
-export default function CreatePost() {
+export default function CreateAPost() {
   const siteTitle = "Create a Post";
-
-  const {
-    register,
-    reset,
-    formState: { errors },
-    handleSubmit,
-  } = useForm<IFormPost>();
-
-  const onSubmit: SubmitHandler<IFormPost> = async (data) => {
-    const payload = {
-      title: data.title,
-      body: data.body,
-      userId: 1,
-    };
-
-    try {
-      const service = new PostService(new PostClient());
-      const createdPost = await service.createPost(payload);
-      reset();
-      console.log(createdPost);
-    } catch (error) {
-      error.statusCode = 404;
-    }
-  };
 
   return (
     <Layout>
@@ -118,47 +86,7 @@ export default function CreatePost() {
                   </Text>
                 </Stack>
                 <Stack p={8}>
-                  <form onSubmit={handleSubmit(onSubmit)}>
-                    <Stack spacing={4}>
-                      <FormControl id="title">
-                        <FormLabel htmlFor="title">Title</FormLabel>
-                        <Input
-                          id="title"
-                          name="title"
-                          placeholder="Title here..."
-                          {...register("title", { required: true })}
-                        />
-                        <Text color={"red"}>
-                          {errors.title && "Title is required"}
-                        </Text>
-                      </FormControl>
-                      <FormControl id="body">
-                        <FormLabel htmlFor="body">Content</FormLabel>
-                        <Textarea
-                          id="body"
-                          name="body"
-                          placeholder="Here is your content"
-                          rows={10}
-                          {...register("body", { required: true })}
-                        />
-                        <Text color={"red"}>
-                          {errors.body && "Content is required"}
-                        </Text>
-                      </FormControl>
-                      <Stack spacing={10}>
-                        <Button
-                          type="submit"
-                          bg={"blue.400"}
-                          color={"white"}
-                          _hover={{
-                            bg: "blue.500",
-                          }}
-                        >
-                          Submit Post
-                        </Button>
-                      </Stack>
-                    </Stack>
-                  </form>
+                  <CreatePost />
                 </Stack>
               </Box>
             </Box>

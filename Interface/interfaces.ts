@@ -18,6 +18,6 @@ export interface IPostClient {
 }
 
 export interface IFormPost {
-  title: string;
-  body: string;
+  Title: string;
+  Body: string;
 }

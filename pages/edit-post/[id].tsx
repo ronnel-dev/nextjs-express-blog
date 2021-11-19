@@ -20,7 +20,7 @@ import { NextPage, GetServerSideProps } from "next";
 import Layout from "../../components/common/layout";
 import BloggerProfile from "../../components/common/BloggerProfile";
 import Head from "next/head";
-import { editPost, getPost, PostService } from "../../api/postService";
+import { PostService } from "../../api/postService";
 import { IFormPost, IPost } from "../../Interface/interfaces";
 import { PostClient } from "../../api/clients/postClient";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -42,15 +42,14 @@ export const BlogAuthor: React.FC<BlogAuthorProps> = (props) => {
 const BlogPage: NextPage<IPost> = (props) => {
   const {
     register,
-    reset,
     formState: { errors },
     handleSubmit,
   } = useForm<IFormPost>();
 
   const onSubmit: SubmitHandler<IFormPost> = async (data) => {
     const payload = {
-      title: data.title,
-      body: data.body,
+      title: data.Title,
+      body: data.Body,
       id: props.id,
     };
 

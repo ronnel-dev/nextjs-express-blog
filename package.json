@@ -19,6 +19,7 @@
     "@chakra-ui/react": "^1.6.10",
     "@emotion/react": "^11.4.1",
     "@emotion/styled": "^11.3.0",
+    "@hookform/resolvers": "^2.8.3",
     "@types/axios": "^0.14.0",
     "@types/morgan": "^1.9.3",
     "axios": "^0.23.0",
@@ -34,7 +35,8 @@
     "react-hook-form": "^7.19.5",
     "react-icons": "^4.3.1",
     "remark": "^13.0.0",
-    "remark-html": "^13.0.2"
+    "remark-html": "^13.0.2",
+    "yup": "^0.32.11"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.15.0",
