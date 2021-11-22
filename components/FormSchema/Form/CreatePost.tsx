@@ -34,7 +34,6 @@ export default function CreatePost({ props }) {
   const onSubmit = async (data: IFormPost) => {
     let payload = {};
     if (!props) {
-      console.log("1");
       payload = {
         title: data.Title,
         body: data.Body,
@@ -52,7 +51,6 @@ export default function CreatePost({ props }) {
         error.statusCode = 404;
       }
     } else {
-      console.log("2");
       payload = {
         title: data.Title,
         body: data.Body,
