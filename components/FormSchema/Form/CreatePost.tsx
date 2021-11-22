@@ -34,29 +34,39 @@ export default function CreatePost({ props }) {
   const onSubmit = async (data: IFormPost) => {
     let payload = {};
     if (!props) {
+      console.log("1");
       payload = {
         title: data.Title,
         body: data.Body,
         userId: 1,
       };
+      try {
+        const service = new PostService(new PostClient());
+
+        const createdPost = await service.createPost(payload);
+        console.log(createdPost);
+        if (!props) {
+          reset();
+        }
+      } catch (error) {
+        error.statusCode = 404;
+      }
     } else {
+      console.log("2");
       payload = {
         title: data.Title,
         body: data.Body,
         id: props.id,
       };
-    }
 
-    try {
-      const service = new PostService(new PostClient());
+      try {
+        const service = new PostService(new PostClient());
+        const updatedPost = await service.editPost(payload);
 
-      const createdPost = await service.createPost(payload);
-      console.log(createdPost);
-      if (!props) {
-        reset();
+        console.log(updatedPost);
+      } catch (error) {
+        error.statusCode = 404;
       }
-    } catch (error) {
-      error.statusCode = 404;
     }
   };
 
