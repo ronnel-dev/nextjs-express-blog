@@ -1,6 +1,13 @@
 import { promises as fs } from "fs";
 import { PostService } from "../../api/postService";
 import { IPost, IPostClient } from "../../Interface/interfaces";
+import CreatePost from "../../components/FormSchema/Form/CreatePost";
+import Enzyme from "enzyme";
+import Adapter from "@wojtekmaj/enzyme-adapter-react-17";
+Enzyme.configure({ adapter: new Adapter() });
+import { shallow } from "enzyme";
+import React from "react";
+import "jsdom-global/register";
 
 class MockClient implements IPostClient {
   private async readFile(): Promise<IPost> {
@@ -109,6 +116,59 @@ describe("Delete /deletePost", () => {
     const postService = new PostService(new MockClient());
     return await postService.deletePost(1).then(async (data) => {
       expect(data).toEqual({});
+    });
+  });
+});
+
+describe("Create Post Form", () => {
+  const props = {
+    title: "Test Title",
+    body: "Test Content",
+  };
+  const wrapper = shallow(<CreatePost props={props} />);
+
+  describe("Title Input", () => {
+    test("Should capture title correctly", () => {
+      let title = wrapper.find("Input");
+      expect(title.props()).toHaveProperty("defaultValue");
+      expect(title.props().defaultValue).toEqual("Test Title");
+    });
+  });
+
+  describe("Content Textarea", () => {
+    test("Should capture content correctly", async () => {
+      let content = wrapper.find("Textarea");
+      expect(content.props()).toHaveProperty("defaultValue");
+      expect(content.props().defaultValue).toEqual("Test Content");
+    });
+  });
+});
+
+describe("Edit Post Form", () => {
+  const props = {
+    title: "Test Title",
+    body: "Test Content",
+  };
+
+  const wrapper = shallow(<CreatePost props={props} />);
+
+  const editProps = {
+    title: "Edit Title",
+    body: "Edit Content",
+  };
+  wrapper.setProps({ props: editProps });
+
+  describe("Title Input", () => {
+    test("Should capture updated title correctly", () => {
+      let title = wrapper.find("Input");
+      expect(title.props().defaultValue).toEqual("Edit Title");
+    });
+  });
+
+  describe("Content Textarea", () => {
+    test("Should capture updated content correctly", async () => {
+      let content = wrapper.find("Textarea");
+      expect(content.props().defaultValue).toEqual("Edit Content");
     });
   });
 });
